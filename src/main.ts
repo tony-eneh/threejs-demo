@@ -1,5 +1,8 @@
 import './style.css';
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+const canvas = document.querySelector('canvas.bg') as HTMLCanvasElement;
 
 // camera
 const camera = new THREE.PerspectiveCamera(
@@ -10,23 +13,32 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.setZ(30);
 
+const orbitControls = new OrbitControls(camera, canvas);
+
 // mesh
 const geometry = new THREE.TorusGeometry(10, 3, 20, 100);
-const material = new THREE.MeshBasicMaterial({
+const material = new THREE.MeshStandardMaterial({
   color: 0xfaed12,
-  wireframe: true,
 });
 const torus = new THREE.Mesh(geometry, material);
 
-// light
+// lights
+const pointLight = new THREE.PointLight(0xffffff);
+const ambientLight = new THREE.AmbientLight(0xffffff);
+
+const lightHelper = new THREE.PointLightHelper(pointLight);
 
 // scene
 const scene = new THREE.Scene();
-scene.add(torus);
+scene.add(torus, pointLight, ambientLight);
+scene.add(lightHelper);
 
-// render
+const gridHelper = new THREE.GridHelper(window.innerWidth, 200);
+scene.add(gridHelper);
+
+// renderer
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector('canvas.bg') as HTMLCanvasElement,
+  canvas,
 });
 
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -39,6 +51,7 @@ function animate() {
   torus.rotation.y += 0.005;
   torus.rotation.z += 0.01;
 
+  orbitControls.update();
   renderer.render(scene, camera);
 
   requestAnimationFrame(animate);
