@@ -1,6 +1,6 @@
 import './style.css';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 const canvas = document.querySelector('canvas.bg') as HTMLCanvasElement;
 
@@ -49,7 +49,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.setZ(30);
 
-const orbitControls = new OrbitControls(camera, canvas);
+// const orbitControls = new OrbitControls(camera, canvas);
 
 /* LIGHTS */
 const pointLight = new THREE.PointLight(0xffffff, 100000);
@@ -65,8 +65,8 @@ scene.add(pointLight);
 scene.add(ambientLight);
 scene.add(lightHelper);
 
-const gridHelper = new THREE.GridHelper(window.innerWidth, 200);
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(window.innerWidth, 200);
+// scene.add(gridHelper);
 
 // dark clouds
 // const sceneBackground = new THREE.TextureLoader().load('dark-clouds.jpeg');
@@ -84,15 +84,29 @@ renderer.render(scene, camera);
 
 function animate() {
   torus.rotation.x += 0.01;
-  torus.rotation.y += 0.005;
-  torus.rotation.z += 0.01;
+  torus.rotation.y += 0.01;
+  torus.rotation.z += 0.02;
 
   pocoCube.rotation.y += 0.01;
 
-  orbitControls.update();
+  // orbitControls.update();
   renderer.render(scene, camera);
 
   requestAnimationFrame(animate);
 }
 
+function moveCamera() {
+  const scrollTop = document.documentElement.scrollTop;
+
+  pocoCube.rotation.x += 0.01;
+  pocoCube.rotation.y += 0.01;
+
+  camera.position.x = scrollTop * 0.005;
+  camera.position.y = scrollTop * 0.005;
+  camera.position.z = scrollTop * 0.05;
+}
+
+window.addEventListener('scroll', moveCamera);
+
+moveCamera();
 animate();
